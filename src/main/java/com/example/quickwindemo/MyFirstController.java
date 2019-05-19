@@ -1,28 +1,19 @@
 package com.example.quickwindemo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MyFirstController {
 
-    static int counter = 0;
+    @Autowired
+    private MyFirstService myFirstService;
 
     @GetMapping
-    public HelloDto hello() {
-        counter++;
-        return new HelloDto(String.format("This application has been called %s times", counter));
+    public HelloDto hello(@RequestParam(required = false) String user) {
+        return myFirstService.hello(user);
     }
 
-    public static class HelloDto {
-        private String text;
-
-        public HelloDto(String text) {
-            this.text = text;
-        }
-
-        public String getText() {
-            return text;
-        }
-    }
 }

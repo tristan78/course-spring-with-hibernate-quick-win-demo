@@ -15,4 +15,11 @@ public class MyFirstService {
     public void init() {
         System.out.println("MyFirstService is ready. Application has been started.");
     }
+
+    static int counter = 0;
+
+    public HelloDto hello(String user) {
+        counter++;
+        return new HelloDto(String.format("Hello %s, This application has been called %s times", user, counter));
+    }
 }
