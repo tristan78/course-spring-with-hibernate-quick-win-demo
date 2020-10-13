@@ -5,8 +5,15 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+
 @Service
 public class MyFirstService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public MyFirstService() {
         System.out.println("MyFirstService constructor called");
@@ -19,8 +26,22 @@ public class MyFirstService {
 
     static int counter = 0;
 
+    @Transactional
     public HelloDto hello(String user) {
         counter++;
-        return new HelloDto(String.format("Hello %s, this application has been called %s times", user, counter));
+        String helloMessage= String.format("Hello %s, this application has been called %s times", user, counter);
+        return new HelloDto(helloMessage + " " + getVisitorlist(user));
+    }
+
+    private String getVisitorlist(String user) {
+        AppVisitorList result = entityManager.find(AppVisitorList.class, 1L);
+        if (result == null) {
+            AppVisitorList newList = new AppVisitorList();
+            result = newList;
+            entityManager.persist(newList);
+        }
+
+        result.addVisitor(user);
+        return result.getListAsString();
     }
 }
